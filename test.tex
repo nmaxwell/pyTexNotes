@@ -1,16 +1,12 @@
-
+"""
 
 %<<setup>>
 
-section
+thm:
+args = { name, number, statement, proof, remarks }
+tex  = 
+Theorem (number):
 
-thm
-    name
-    number
-    statement
-    proof
-    remarks
-    
 prop
     number
     statement
@@ -23,7 +19,78 @@ lemma
     proof
     remarks
 
-%<</setup>>
+%<</setup>
+
+%<>
+
+
+%<theorem>
+%<name>
+Rudin 6.4
+%<statement>
+$\M(X, \A)$ is a normed space w.r.t. $||\nu|| := \nu(X) \fall \nu \in \M(X, \A)$.
+%<proof>
+$|| \nu_1 + \nu_2 || = |\nu_1 + \nu_2|(X) \le |\nu_1|(X) + |\nu_2|(X) = ||\nu_1|| + ||\nu_2|| $. $||\lambda \nu|| = |\lambda \nu|(X) = |\lambda| |\nu|(X) = |\lambda| ||\nu||$. $||\nu||(X) = |\nu|(X) \ge 0$, $||\nu|| = 0 \rimply |\nu|(X) = 0 \rimply 0 = |\nu|(X) \ge |\nu|(E) \ge |\nu(E)| \fall E \in \A \rimply$ $\nu = 0$.
+%<\theorem>
+
+"""
+
+
+
+
+
+theorem:
+    name:
+        Rudin 6.4
+    statement:
+        $\M(X, \A)$ is a normed space w.r.t. $||\nu|| := \nu(X) \fall \nu \in \M(X, \A)$.
+    proof:
+        $|| \nu_1 + \nu_2 || = |\nu_1 + \nu_2|(X) \le |\nu_1|(X) + |\nu_2|(X) = ||\nu_1|| + ||\nu_2|| $. $||\lambda \nu|| = |\lambda \nu|(X) = |\lambda| |\nu|(X) = |\lambda| ||\nu||$. $||\nu||(X) = |\nu|(X) \ge 0$, $||\nu|| = 0 \rimply |\nu|(X) = 0 \rimply 0 = |\nu|(X) \ge |\nu|(E) \ge |\nu(E)| \fall E \in \A \rimply$ $\nu = 0$.
+    remarks:
+        Write $\M(X,\A)$ or $\M(\A)$ for the set of all complex or signed and finite measures on $\A$.
+        Write $\M^\pm(X,\A)$ or $\M^\pm(\A)$ for the set of all signed and finite measures on $\A$.
+        Write $\M^+(X,\A)$ or $\M^+(\A)$ for the set of all positive measures on $\A$. 
+        Positive measures need not be finite, so $\M^+(\A) \not \subset \M(\A)$.
+
+theorem:
+    name:
+        Rudin 6.5
+    statement:
+        $\M(X, \A)$ is a normed space w.r.t. $||\nu|| := \nu(X) \fall \nu \in \M(X, \A)$.
+    proof:
+        $|| \nu_1 + \nu_2 || = |\nu_1 + \nu_2|(X) \le |\nu_1|(X) + |\nu_2|(X) = ||\nu_1|| + ||\nu_2|| $. $||\lambda \nu|| = |\lambda \nu|(X) = |\lambda| |\nu|(X) = |\lambda| ||\nu||$. $||\nu||(X) = |\nu|(X) \ge 0$, $||\nu|| = 0 \rimply |\nu|(X) = 0 \rimply 0 = |\nu|(X) \ge |\nu|(E) \ge |\nu(E)| \fall E \in \A \rimply$ $\nu = 0$.
+    remarks:
+        Write $\M(X,\A)$ or $\M(\A)$ for the set of all complex or signed and finite measures on $\A$.
+        Write $\M^\pm(X,\A)$ or $\M^\pm(\A)$ for the set of all signed and finite measures on $\A$.
+        Write $\M^+(X,\A)$ or $\M^+(\A)$ for the set of all positive measures on $\A$. 
+        Positive measures need not be finite, so $\M^+(\A) \not \subset \M(\A)$.
+
+
+
+
+
+
+
+
+
+
+"""
+(theorem
+    (name Rudin 6.4)
+    (statement "la shdfjskfsdf")
+    (proof "blahshasdsdF")
+    (remarks
+        "bkashdsafsdf"
+        "hsafkjsfsdF"
+        "sldhfkjdsfsdf")) 
+"""
+
+
+
+
+
+"""
+
 
 
 
@@ -663,6 +730,7 @@ Proof: 4) $\mu \ll \mu$, $\nu \ll \nu$, and $\frac{d\mu}{d\mu} = 1 = \frac{d\nu}
 
 
 
+"""
 
 
 

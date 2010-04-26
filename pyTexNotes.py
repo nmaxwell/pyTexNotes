@@ -6,35 +6,133 @@ from glob import iglob
 import shutil
 import getopt
 
-
+"""
 class document:
     n_secions=0
     input_file=None
+"""
+
+def extract_block( input, start_string, end_string ):
     
+    blocks= []
     
-def parse(input ):
+    for n1 in range(len(input)):
+        if input[n1] != None and start_string in input[n1][1]:
+            block = []
+            for n2 in range(n1+1, len(input)):
+                if end_string in input[n2][1]:
+                    input[n2] = None
+                    break
+                else:
+                    block.append(input[n2])
+                    input[n2] = None
+            input[n1] = None
+            blocks.append(block)
+    
+    while None in input:
+        input.remove(None)
+    
+    return blocks
+
+
+def count_indents( line, indent=" "*4 ):
+    # All characters in indent must be the same.
+    c = indent[0]
+    pos=0
+    while pos<len(line):
+        if line[pos] != c:
+            break
+        pos += 1
+    line = line[pos:]
+    return (line, pos/len(indent), pos%len(indent) )
+
+
+
+
+def parse(input_file ):
+    
     print "parsing..."
     
+    # preprocessing...
     
+    tab = " "*4
     
+    lines = [ (line_number+1, line) for line_number, line in enumerate([ line for line in input_file ]) ] 
     
-    for number, line in enumerate(input):
-        if line == "%<<setup>>":
-            n1 = number
-            for k in range(n1,len(input)):
-                if line == "%<</setup>>":
-                
+    blocks = extract_block( lines, start_string='\"\"\"', end_string='\"\"\"' )
     
+    for ln, line in enumerate(lines):
+        ( trimmed_line, level, remainder ) = count_indents( line[1], tab )
+        if remainder != 0:
+            print "error: bad indentation at line ", line[0]
+            quit()
+        lines[ln] = ( line[0], level, trimmed_line )
     
+    ln = 0
+    while ln < len(lines):
+        if lines[ln][2] == '\n' or lines[ln][2] == '':
+            lines.pop(ln)
+        else:
+            ln += 1
     
+    lines = [ (line[0], line[1]-lines[0][1], line[2].replace('\n','') ) for line in lines ]
     
+    for ln,line in enumerate(lines):
+        if ln < len(lines)-1:
+            diff = lines[ln+1][1]-lines[ln][1]
+            if diff>1:
+                print "error: unexpected indent, of the first kind, at line", line[0]+1
+                quit()
     
+    # Parsing in earnest...
     
+    def is_keyword(token ):
+        if token[-1] != ':':
+            return False
+        for c in token[0:len(token)-1]:
+            if not c.isalpha():
+                return False
+        return True
     
+    lines = [ (line[0], line[1], is_keyword(line[2]), line[2]) for line in lines ]
+    
+    """
+    class branch:
+        def __init__(self, type=None,tokens=[], level=None ):
+            self.type = type_to_name
+            self.tokens = tokens
+            self.level = level
+        
+        def parse(lines ):
+            None
+    """
+    
+    #document = branch(type='keywords', level=0 )
+    
+    document = None
+    
+    """
+    for ln,line in enumerate(lines):
+        
+        token = line[2]
+        
+        if is_keyword(token ):
+            None
+        else:
+            None
+    """
+    
+    for line in lines:
+        print line
+    
+    """
     doc = document()
     doc.input_file=input
+    """
     
-    return doc
+    return document
+
+
 
 
 def compile(doc, output, macro, preamble ):
@@ -128,8 +226,8 @@ if __name__ == "__main__":
             print "error: couldn't open input file: ", input_fname
             quit()
         
-        
         doc = parse(input)
+        """
         compile(doc, output, macro, preamble )
         input.close()
         
@@ -139,3 +237,5 @@ if __name__ == "__main__":
         os.system( "rm " + basename + '.log' )
         basename, extension = os.path.splitext(output_fname)
         os.system( "rm " + basename + '.aux' )
+        
+        """
