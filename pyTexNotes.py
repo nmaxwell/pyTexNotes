@@ -99,13 +99,23 @@ def parse(input_file ):
     """
     class branch:
         def __init__(self, type=None,tokens=[], level=None ):
-            self.type = type_to_name
+            self.type = type
             self.tokens = tokens
             self.level = level
         
-        def parse(lines ):
-            None
-    """
+        def parse(self, lines ):
+            
+            pos=0
+            for ln,line in enumerate(lines):
+                if line[1] <= self.level:
+                    break
+                pos=ln
+            print lines[pos][0]
+   
+    
+    b = branch(level=0)
+    b.parse(lines[1:])
+     """
     
     #document = branch(type='keywords', level=0 )
     
@@ -122,20 +132,20 @@ def parse(input_file ):
             None
     """
     
-    for line in lines:
+    """
+    for ln,line in enumerate(lines):
         print line
-    
-    """
-    doc = document()
-    doc.input_file=input
     """
     
-    return document
+    return lines
 
 
 
 
-def compile(doc, output, macro, preamble ):
+
+
+
+def compile(lines, output, macro, preamble ):
     print "compiling..."
     
     out_file = open(output_fname, 'w')
@@ -148,8 +158,13 @@ def compile(doc, output, macro, preamble ):
     
     out_file.write("\n\\begin{document}\n")
     
-    for line in doc.input_file:
-        out_file.write(line)
+    pos=0
+    while pos < len(lines):
+        
+        print lines[pos]
+        
+        pos += 1
+    
     
     out_file.write("\n\\end{document}\n")
     out_file.close()
@@ -227,10 +242,10 @@ if __name__ == "__main__":
             quit()
         
         doc = parse(input)
-        """
         compile(doc, output, macro, preamble )
         input.close()
         
+        """
         time.sleep(0.1)        
         os.system( "pdflatex " + output_fname )
         basename, extension = os.path.splitext(output_fname)
