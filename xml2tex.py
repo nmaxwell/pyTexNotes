@@ -1,44 +1,42 @@
 
 import sys
 import os
-#import time
-#from glob import iglob
-#import shutil
-#import getopt
 import xml.parsers.expat
-
 import tools
-import genXml
 
 
-def compile(xml_lines, xml_line_numbers, macro, preamble ):
-    sys.stdout.write("Compiling...\t")
-    print "\n"
+
+
+def to_tex(input ):
     
+    #define handlers:
     
-    tex_lines=[]
+    class handler:
+        token=None
+        def __init__(self, token):
+            self.token = token
     
-    for line in preamble:
-        tex_lines.append(line)
+    token_list=['theorem', 'document']
+    handlers={}
     
-    for line in macro:
-        tex_lines.append(line)
-    
-    tex_lines.append("\n\\begin{document}\n")
-    
-    p = xml.parsers.expat.ParserCreate()
-    
-    for line in xml_lines:
-        print line
+    for token in token_list:    
+        handlers[token]=handler(token)
     
     
     
-    tex_lines.append("\n\\end{document}\n")
+    handlers[token].__call__
     
     
-    print ''
-    sys.stdout.write("done.\n")
-    return tex_lines
+    
+    
+    
+    
+    
+    
+    return ([],[])
+
+
+
 
 
 
@@ -65,10 +63,7 @@ if __name__ == "__main__":
         if ofname in [ '', None ]:
             ifname = input_args[k]
             (name, in_ext) = os.path.splitext(ifname)
-            if in_ext not in ['tex', '.tex' ]:
-                output_args[k] = name + '.tex'
-            else:
-                output_args[k] = name + '.out' + '.tex'
+            output_args[k] = name + '.out' + '.tex'
     
     for num in range(len(input_args)):
     
@@ -87,11 +82,16 @@ if __name__ == "__main__":
             print "error: couldn't open output file: ", output_fname
             quit()
         
+        tex_lines, tex_line_numbers = to_tex(input)
         
-        xml_lines, xml_line_numbers = genXml.to_xml(input)
-        
+        for line in tex_lines:
+            output.write(line + "\n" )
         
         output.close()
         input.close()
         
+
+
+
+
 
