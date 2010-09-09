@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
 
+<latex_xml>
+<preamble>
+    <file>
+        default_preamble.tex
+    </file>
+</preamble>
+<macros>
+    <file>
+        default_macros.tex
+    </file>
+</macros>
 <document>
     <theorem>
         <name>
@@ -20,10 +31,32 @@
     </theorem>
     <theorem>
         <statement>
-            blah blah blah $\M(X, \A)$ is azhadthaaehah $l \nu \in \M(X, \A)$.
+            <a>
+                <b>
+                    <c>
+                        <d>
+                            blah blah blah $\M(X, \A)$ is azhadthaaehah $l \nu \in \M(X, \A)$.
+                        </d>
+                    </c>
+                </b>
+            </a>
         </statement>
         <proof>
             $\nu_2|(X) \le |\nu_1|(X) + |\nu_2|(X) $
         </proof>
     </theorem>
+    <corollary>
+        <name>
+            Lebesgue Decomposition of $\nu$ w.r.t $\mu$.
+        </name>
+        <statement>
+            <tex>
+                bleh
+            </tex>
+            <eqn>
+                \nu(E) = \int_E f \, d\mu + \nu_{\perp,\mu}(E)
+            </eqn>
+        </statement>
+    </corollary>
 </document>
+</latex_xml>

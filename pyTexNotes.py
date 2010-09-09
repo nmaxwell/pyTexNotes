@@ -11,6 +11,7 @@ import tools
 import genXml
 
 
+
 def compile(xml_lines, xml_line_numbers, macro, preamble ):
     sys.stdout.write("Compiling...\t")
     print "\n"

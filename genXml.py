@@ -69,17 +69,32 @@ def to_xml(input_file ):
     lines = [ (line_number+1, line) for line_number, line in enumerate([ line for line in input_file ]) ] 
     
     if len(lines) == 0:
-        print "\nEmpty file."
+        print "\nRead as empty file."
         return ([], [])
     
+    #remove block comments
     blocks = extract_block( lines, start_string='\"\"\"', end_string='\"\"\"' )
+    
+    #remove commented lines
+    for n,line in enumerate(lines):
+        for k,c in enumerate(line):
+            if c=='%':
+                if k==0:
+                    lines[n] = None
+		    break
+                if line[k-1] != '\\':
+                    lines[n] = line[0:c]
+    while None in lines:
+        lines.remove(None)
+
+    # checking indentations
     
     for ln, line in enumerate(lines):
         ( trimmed_line, level, remainder ) = count_indents( line[1], TAB )
         if remainder != 0:
             print "error: bad indentation at line ", line[0]
             quit()
-        lines[ln] = ( line[0], level, trimmed_line )
+        lines[ln] = (line[0], level, trimmed_line )
     
     ln = 0
     while ln < len(lines):
@@ -90,7 +105,6 @@ def to_xml(input_file ):
     
     lines = [ (line[0], line[1]-lines[0][1], line[2].replace('\n','') ) for line in lines ]
     
-    # checking indentations
     
     for ln,line in enumerate(lines):
         if ln < len(lines)-1:
@@ -145,10 +159,13 @@ def to_xml(input_file ):
     print '\n'*4
     """
     
+    #for x in lines:
+    #    print x
+    
     #generate xml lines
     
-    xml_lines = ["<?xml version=\"1.0\"?>\n"]
-    xml_line_numbers = [None]
+    xml_lines = ["<?xml version=\"1.0\"?>\n","<latex_xml>"]
+    xml_line_numbers = [None for x in xml_lines]
     
     queue=[]
     indent=0
@@ -176,8 +193,17 @@ def to_xml(input_file ):
         xml_lines.append( XML_TAB*(indent) + '</' + queue.pop() + '>' )
         xml_line_numbers.append(None)
     
+    xml_lines.append("</latex_xml>")
+    xml_line_numbers.append(None)
     sys.stdout.write('done.\n')
     return xml_lines, xml_line_numbers
+
+
+
+
+
+
+
 
 
 
