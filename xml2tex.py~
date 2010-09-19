@@ -33,9 +33,6 @@ class to_tex:
         self.refresh()
         self.parse(self.xmldoc)
         self.replacements()
-        #for line in self.tex_lines:
-            #print len(line)
-
         return self.tex_lines
     
     def replacements(self ):
@@ -80,7 +77,7 @@ class to_tex:
         text = node.data
         #print [ord(c) for c in text]
         #print [ord(c) for c in "\n    "]
-        self.tex_lines.append(text.strip())
+        self.tex_lines.append(text)
         
     
     def parse_Element(self, node):
@@ -112,15 +109,18 @@ class to_tex:
             name = node.nodeName
             
             if name == "macros":
+                print "macros tag detected."
                 for child in node.childNodes:
                     if child.nodeName == "file":
+                        print "\tfile tag detected."
                         source = child.firstChild.data.strip()
                         try:
                             macros_file = toolbox.openAnything(source)
                             macros.append(macros_file.read())
                             macros_file.close()
+                            print "\t\tSuccesfully read macros file."
                         except:
-                            print "error in opening macro file."
+                            print "\t\terror in opening macro file."
                     else:
                         if child.nodeName ==  "#text":
                             stripped = child.data.strip()
@@ -129,15 +129,18 @@ class to_tex:
             
             
             if name == "preamble":
+                print "preamble tag detected."
                 for child in node.childNodes:
                     if child.nodeName == "file":
+                        print "\tfile tag detected."
                         source = child.firstChild.data.strip()
                         try:
                             preamble_file = toolbox.openAnything(source)
                             preamble.append(preamble_file.read())
                             preamble_file.close()
+                            print "\t\tSuccesfully read preamble file."
                         except:
-                            print "error in opening preamble file."
+                            print "\t\terror in opening preamble file."
                     else:
                         if child.nodeName ==  "#text":
                             stripped = child.data.strip()
@@ -216,6 +219,13 @@ class to_tex:
         self.tex_lines.extend(text)
         self.tex_lines.append("\\end{flushleft}")
     
+    def do_definition(self, node):
+        
+        self.tex_lines.append("\\begin{flushleft} \n ")
+        for child in node.childNodes:
+            self.parse(child)
+        self.tex_lines.append("\\end{flushleft}")
+
     def do_equation(self, node):
         text = []
         for child_node in node.childNodes:
@@ -248,6 +258,19 @@ class to_tex:
                     node.childNodes[k] = None
         
         self.tex_lines.append("\\end{flushleft}\n")
+
+    def do_itemize(self, node):
+        self.tex_lines.append("\\begin{itemize} \n ")
+        for child_node in node.childNodes:
+            if child_node.nodeName == "#text":                
+                text = child_node.data
+                print len((text.split('\n')))
+                print text.__class__
+                if len(text)>0:
+                    self.tex_lines.append("\\item")
+                    self.tex_lines.append(text)
+        quit()
+        self.tex_lines.append("\n\\end{itemize} \n ")
     
     def do_theorem(self, node):
         
@@ -282,177 +305,15 @@ class to_tex:
 
     def do_list(self, node):
         
-        fields = {}
-        items = []
-        
-        for child_node in node.childNodes:
-            name = child_node.nodeName
-            if name != '#text':
-                fields[name] = child_node
-            if name == 'item':
-                for gchild_node in child_node.childNodes:
-                    items.append(gchild_node.data)
-            else:
-                fields[name] = child_node
-        token = ''
-        if 'token' in fields:
-            token = fields['token'].firstChild.data.strip()
-        
-        self.tex_lines.append("\\begin{itemize}\n")
-        
-        for item in items:
-            self.tex_lines.append("\\item[" + token + '] ' )
-            self.tex_lines.append(item)
-        
-        self.tex_lines.append("\\end{itemize}")
-
-
-    def do_enumerate(self, node):
 
         fields = {}
-        items = []
-        
         for child_node in node.childNodes:
             name = child_node.nodeName
-            if name != '#text':
+            if name != "#text":
                 fields[name] = child_node
-            if name == 'item':
-                for gchild_node in child_node.childNodes:
-                    items.append(gchild_node.data)
-            else:
-                fields[name] = child_node
+                
         
-        token = None
-        if 'token' in fields:
-            token = fields['token'].firstChild.data.strip()
-        
-        if token is not None:
-            self.tex_lines.append("\\begin{enumerate}[" + token + "]\n")
-        else:
-            self.tex_lines.append("\\begin{enumerate}\n")
-        
-        for item in items:
-            self.tex_lines.append("\\item")
-            self.tex_lines.append(item)
-        
-        self.tex_lines.append("\\end{enumerate}")
-
-    def do_example(self, node):
-        
-        number = None
-        for k,child_node in enumerate(node.childNodes):
-            if child_node is not None and child_node.nodeName == "number":
-                number = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-        
-        self.tex_lines.append("\\begin{flushleft} \n ")
-        if number is not None:
-            self.tex_lines.append("{ \\bf " + number + " }")
-        self.tex_lines.append("{ \\bf Example }")
-        for child in node.childNodes:
-            self.parse(child)
-        self.tex_lines.append("\\end{flushleft}")
-        
-    
-    def do_definition(self, node):
-        
-        number = None
-        for k,child_node in enumerate(node.childNodes):
-            if child_node is not None and child_node.nodeName == "number":
-                number = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-        
-        self.tex_lines.append("\\begin{flushleft} \n ")
-        if number is not None:
-            self.tex_lines.append("{ \\bf " + number + " Definition }")
-        else:
-            self.tex_lines.append("{ \\bf Definition }")
-        for child in node.childNodes:
-            self.parse(child)
-        self.tex_lines.append("\\end{flushleft}")
-
-    def do_lemma(self, node):
-        
-        number = None
-        name = None
-        for k,child_node in enumerate(node.childNodes):
-            if child_node is not None and child_node.nodeName == "number":
-                number = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-            if child_node is not None and child_node.nodeName == "name":
-                name = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-        
-        self.tex_lines.append("\\begin{flushleft} \n ")
-        if number is not None:
-            self.tex_lines.append("{ \\bf " + number + " Lemma }")
-        else:
-            self.tex_lines.append("{ \\bf Lemma }")
-        if name is not None:
-            self.tex_lines.append("{ \\bf " + name + " }")
-        
-        for child in node.childNodes:
-            self.parse(child)
-        self.tex_lines.append("\\end{flushleft}")
-
-    def do_proposition(self, node):
-        
-        number = None
-        name = None
-        for k,child_node in enumerate(node.childNodes):
-            if child_node is not None and child_node.nodeName == "number":
-                number = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-            if child_node is not None and child_node.nodeName == "name":
-                name = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-        
-        self.tex_lines.append("\\begin{flushleft} \n ")
-        if number is not None:
-            self.tex_lines.append("{ \\bf " + number + " Lemma }")
-        else:
-            self.tex_lines.append("{ \\bf Proposition }")
-        if name is not None:
-            self.tex_lines.append("{ \\bf " + name + " }")
-        
-        for child in node.childNodes:
-            self.parse(child)
-        self.tex_lines.append("\\end{flushleft}")
-
-    def do_corollary(self, node):
-        
-        number = None
-        name = None
-        for k,child_node in enumerate(node.childNodes):
-            if child_node is not None and child_node.nodeName == "number":
-                number = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-            if child_node is not None and child_node.nodeName == "name":
-                name = child_node.firstChild.data.strip()
-                node.childNodes[k] = None
-        
-        self.tex_lines.append("\\begin{flushleft} \n ")
-        if number is not None:
-            self.tex_lines.append("{ \\bf " + number + " Lemma }")
-        else:
-            self.tex_lines.append("{ \\bf Corollary }")
-        if name is not None:
-            self.tex_lines.append("{ \\bf " + name + " }")
-        
-        for child in node.childNodes:
-            self.parse(child)
-        self.tex_lines.append("\\end{flushleft}")
-
-    def do_proof(self, node):
-        
-        self.tex_lines.append("\\begin{flushleft} \n ")
-        self.tex_lines.append("\\emph{Proof.  }")
-        for child in node.childNodes:
-            self.parse(child)
-        #self.tex_lines.append("$\Box$")
-        self.tex_lines.append("\\end{flushleft}")
-
-
+        pass
 
 
 

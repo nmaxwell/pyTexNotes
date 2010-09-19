@@ -11,30 +11,13 @@ XML_TAB = ' '*4
 EXTENSION = '.xml'
 
 def is_keyword(token ):
-	"""
-	Keyword must end in ':', be alpha-numeric,
-	may contain underscores, and be seperated by commas
-	"""
         if token[-1] != ':':
             return False
         for c in token[0:len(token)-1]:
-            if not c.isalnum() and c not in [',', '_' ]:
+            if not c.isalpha() and c not in [',', '_' ]:
                 return False
         return True
 
-def replacements(line ):
-    
-    line = line.replace("&", "&amp;")    
-    line = line.replace("<", "&lt;")
-    line = line.replace(">", "&gt;")
-    
-    return line
-
-def adjust_keyword(keyword ):
-    if keyword[0].isdigit():
-        keyword = "reserved_" + keyword
-    return keyword
-    
 
 # code:
 
@@ -88,8 +71,6 @@ def to_xml(input_file ):
     if len(lines) == 0:
         print "\nRead as empty file."
         return ([], [])
-    
-    lines = [ (line[0], replacements(line[1])) for line in lines]
     
     #remove block comments
     blocks = extract_block( lines, start_string='\"\"\"', end_string='\"\"\"' )
@@ -192,13 +173,13 @@ def to_xml(input_file ):
     
         while line[1] < indent:
             indent += -1
-            xml_lines.append( XML_TAB*indent + '</' + adjust_keyword(queue.pop()) + '>' )
+            xml_lines.append( XML_TAB*indent + '</' + queue.pop() + '>' )
             xml_line_numbers.append(None)
     
         if is_keyword(line[2]):
             name = line[2].strip(':')
-	    
-            xml_lines.append( XML_TAB*indent + '<' + adjust_keyword(name) + '>' )
+                
+            xml_lines.append( XML_TAB*indent + '<' + name + '>' )
             indent += 1
             xml_line_numbers.append(line[0])
             queue.append(name)
@@ -209,7 +190,7 @@ def to_xml(input_file ):
     
     while len(queue)>0:
         indent += -1
-        xml_lines.append( XML_TAB*(indent) + '</' + adjust_keyword(queue.pop()) + '>' )
+        xml_lines.append( XML_TAB*(indent) + '</' + queue.pop() + '>' )
         xml_line_numbers.append(None)
     
     xml_lines.append("</latex_xml>")
